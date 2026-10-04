@@ -78,7 +78,8 @@ pub fn parse_nso(path: &Path) -> Result<NsoModule, String> {
         return Err(format!("NSO magic mismatch: {magic:#x}"));
     }
 
-    let flags = read_u32(&bytes, 0x8).map_err(|err| err.to_string())?;
+    // Header layout: magic (0x0), version (0x4), reserved (0x8), flags (0xC).
+    let flags = read_u32(&bytes, 0xC).map_err(|err| err.to_string())?;
     let text = read_segment(&bytes, 0x10, NsoSegmentKind::Text)?;
     let rodata = read_segment(&bytes, 0x20, NsoSegmentKind::Rodata)?;
     let data = read_segment(&bytes, 0x30, NsoSegmentKind::Data)?;
